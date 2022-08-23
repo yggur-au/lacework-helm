@@ -1,10 +1,12 @@
+{{- if not .Values.scanner.certs.useExistingSecret }}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ .Values.certs.name }}
+  name: {{ .Values.scanner.certs.name }}
 data:
-{{- if not .Values.scanner.skipVerify }}
-  ca.crt: {{ .Values.scanner.caCert }} # root CA for scanner
+  {{- if not .Values.scanner.skipVerify }}
+  ca.crt: {{ .Values.scanner.certs.caCert }} # root CA for scanner
+  {{- end }}
+  admission.crt: {{ .Values.scanner.certs.serverCertificate }}  # place server cert
+  admission.key: {{ .Values.scanner.certs.serverKey }}  # place server key
 {{- end }}
-  admission.crt: {{ .Values.certs.serverCertificate }}  # place server cert
-  admission.key: {{ .Values.certs.serverKey }}  # place server key

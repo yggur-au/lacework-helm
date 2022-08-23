@@ -19,8 +19,16 @@ policy:
 scanner:
   server: "lacework-proxy-scanner"
   namespace: "lacework"
-  skipVerify: true
-  caCert:
+  skipVerify: true  
+  certs:
+    # Certificates
+    # Set 'useExistingSecret' to use an already existing TLS secret. Note that a CA chain file does need to exist.
+    # Alternatively, set to false and populate values, which will create a TLS secret of that name.
+    useExistingSecret: true
+    name: lacework-admission-certs
+    serverCertificate:
+    serverKey:
+    caCert:
   timeout: 30
   defaultRegistry: index.docker.io
   blockOnError: false
@@ -35,11 +43,6 @@ kubernetesCluster:
 
 serviceAccount:
   name: lacework-admission-sa
-
-certs:
-  name: lacework-admission-certs
-  serverCertificate:
-  serverKey:
 
 webhooks:
   caBundle:
@@ -109,6 +112,8 @@ proxy-scanner:
           scan_directory_path: ""
 
   certs:
+    useExistingSecret: true
     skipCert: true
+    name: 
     serverCertificate:
     serverKey:

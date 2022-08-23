@@ -49,9 +49,22 @@ spec:
               mountPath: "/config"
               readOnly: true
       volumes:
+        {{- if not .Values.scanner.certs.useExistingSecret }}
         - name: "certs"
           secret:
-            secretName: {{ .Values.certs.name }}
+            secretName: {{ .Values.scanner.certs.name }}
+        {{- else }}
+        - name: "certs"
+          secret:
+            secretName: {{ .Values.scanner.certs.name }}
+            items:
+              - key: {{ .Values.scanner.certs.serverCertificate }}
+                path: admission.crt
+              - key: {{ .Values.scanner.certs.serverKey }}
+                path: admission.key
+              - key: {{ .Values.scanner.certs.caCert }}
+                path: ca.crt
+        {{- end }}
         - name: "lacework-admission-volume"
           configMap:
             name: {{ include "admission.fullname" . }}

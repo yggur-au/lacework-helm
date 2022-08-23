@@ -42,6 +42,7 @@ spec:
         volumeMounts:
         - name: certs
           mountPath: /certs
+          readOnly: true
         - name: scanner-config-volume
           mountPath: /opt/lacework/config
         - name: registries
@@ -49,9 +50,15 @@ spec:
         resources:
 {{ toYaml .Values.resources | indent 10 }}
       volumes:
+      {{- if not .Values.certs.useExistingSecret }}
       - name: "certs"
         secret:
             secretName: {{ .Values.name }}-certs
+      {{- else }}
+      - name: "certs"
+        secret:
+            secretName: {{ .Values.certs.name }}
+      {{- end }}
       - name: "registries"
         secret:
 {{- if .Values.config.registry_secret_name }}
